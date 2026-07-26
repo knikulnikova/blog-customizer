@@ -11,6 +11,7 @@ import {
 	backgroundColors,
 	contentWidthArr,
 	ArticleStateType,
+	OptionType,
 } from 'src/constants/articleProps';
 
 import styles from './ArticleParamsForm.module.scss';
@@ -20,7 +21,12 @@ import { useState, useEffect, useRef } from 'react';
 
 type ParamsFormProps = {
 	defaultArticleState: ArticleStateType;
+	formState: ArticleStateType;
+	setFormState: React.Dispatch<React.SetStateAction<ArticleStateType>>;
+	setArticleState: React.Dispatch<React.SetStateAction<ArticleStateType>>;
 };
+
+type TOptionName = keyof ArticleStateType;
 
 export const ArticleParamsForm = (props: ParamsFormProps) => {
 	//Состояние открытия-закрытия панели с формой
@@ -30,6 +36,24 @@ export const ArticleParamsForm = (props: ParamsFormProps) => {
 	//Обработчик клика по кнопке-стрелке
 	const handleToggleSidebar = () => {
 		return setIsOpen((prevState) => !prevState);
+	};
+
+	function handleChange(optionName: TOptionName) {
+		return (option: OptionType) => {
+			props.setFormState((prevState) => ({
+				...prevState,
+				[optionName]: option,
+			}));
+		};
+	}
+
+	const handleApply = () => {
+		props.setArticleState({ ...props.formState });
+	};
+
+	const handleClear = () => {
+		props.setFormState({ ...props.defaultArticleState });
+		props.setArticleState({ ...props.defaultArticleState });
 	};
 
 	//Добавляем обработчик клика вне формы при ее открытии
@@ -60,40 +84,58 @@ export const ArticleParamsForm = (props: ParamsFormProps) => {
 			<aside
 				ref={refSidebar}
 				className={clsx(styles.container, { [styles.container_open]: isOpen })}>
-				<form className={styles.form} style={{ gap: '48px' }}>
+				<form
+					className={styles.form}
+					style={{ gap: '48px' }}
+					onSubmit={(event) => event.preventDefault()}>
 					<Text as='h2' size={31} weight={800} uppercase>
 						Задайте параметры
 					</Text>
 					<Select
-						selected={props.defaultArticleState.fontFamilyOption}
+						selected={props.formState.fontFamilyOption}
 						options={fontFamilyOptions}
 						title='Шрифт'
+						onChange={handleChange('fontFamilyOption')}
 					/>
 					<RadioGroup
 						name='fontSizeOptions'
 						options={fontSizeOptions}
-						selected={props.defaultArticleState.fontSizeOption}
+						selected={props.formState.fontSizeOption}
 						title='Размер шрифта'
+						onChange={handleChange('fontSizeOption')}
 					/>
 					<Select
-						selected={props.defaultArticleState.fontColor}
+						selected={props.formState.fontColor}
 						options={fontColors}
 						title='Цвет шрифта'
+						onChange={handleChange('fontColor')}
 					/>
 					<Separator />
 					<Select
-						selected={props.defaultArticleState.backgroundColor}
+						selected={props.formState.backgroundColor}
 						options={backgroundColors}
 						title='Цвет фона'
+						onChange={handleChange('backgroundColor')}
 					/>
 					<Select
-						selected={props.defaultArticleState.contentWidth}
+						selected={props.formState.contentWidth}
 						options={contentWidthArr}
 						title='Ширина контента'
+						onChange={handleChange('contentWidth')}
 					/>
 					<div className={styles.bottomContainer}>
-						<Button title='Сбросить' htmlType='reset' type='clear' />
-						<Button title='Применить' htmlType='submit' type='apply' />
+						<Button
+							title='Сбросить'
+							htmlType='reset'
+							type='clear'
+							onClick={handleClear}
+						/>
+						<Button
+							title='Применить'
+							htmlType='submit'
+							type='apply'
+							onClick={handleApply}
+						/>
 					</div>
 				</form>
 			</aside>
