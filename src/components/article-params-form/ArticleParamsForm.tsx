@@ -21,14 +21,16 @@ import { useState, useEffect, useRef } from 'react';
 
 type ParamsFormProps = {
 	defaultArticleState: ArticleStateType;
-	formState: ArticleStateType;
-	setFormState: React.Dispatch<React.SetStateAction<ArticleStateType>>;
 	setArticleState: React.Dispatch<React.SetStateAction<ArticleStateType>>;
 };
 
 type TOptionName = keyof ArticleStateType;
 
 export const ArticleParamsForm = (props: ParamsFormProps) => {
+	//Текущее состояние формы
+	const [formState, setFormState] = useState<ArticleStateType>(
+		props.defaultArticleState
+	);
 	//Состояние открытия-закрытия панели с формой
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	//Элемент сайдбара
@@ -40,7 +42,7 @@ export const ArticleParamsForm = (props: ParamsFormProps) => {
 
 	function handleChange(optionName: TOptionName) {
 		return (option: OptionType) => {
-			props.setFormState((prevState) => ({
+			setFormState((prevState) => ({
 				...prevState,
 				[optionName]: option,
 			}));
@@ -48,11 +50,11 @@ export const ArticleParamsForm = (props: ParamsFormProps) => {
 	}
 
 	const handleApply = () => {
-		props.setArticleState({ ...props.formState });
+		props.setArticleState({ ...formState });
 	};
 
 	const handleClear = () => {
-		props.setFormState({ ...props.defaultArticleState });
+		setFormState({ ...props.defaultArticleState });
 		props.setArticleState({ ...props.defaultArticleState });
 	};
 
@@ -92,7 +94,7 @@ export const ArticleParamsForm = (props: ParamsFormProps) => {
 						Задайте параметры
 					</Text>
 					<Select
-						selected={props.formState.fontFamilyOption}
+						selected={formState.fontFamilyOption}
 						options={fontFamilyOptions}
 						title='Шрифт'
 						onChange={handleChange('fontFamilyOption')}
@@ -100,25 +102,25 @@ export const ArticleParamsForm = (props: ParamsFormProps) => {
 					<RadioGroup
 						name='fontSizeOptions'
 						options={fontSizeOptions}
-						selected={props.formState.fontSizeOption}
+						selected={formState.fontSizeOption}
 						title='Размер шрифта'
 						onChange={handleChange('fontSizeOption')}
 					/>
 					<Select
-						selected={props.formState.fontColor}
+						selected={formState.fontColor}
 						options={fontColors}
 						title='Цвет шрифта'
 						onChange={handleChange('fontColor')}
 					/>
 					<Separator />
 					<Select
-						selected={props.formState.backgroundColor}
+						selected={formState.backgroundColor}
 						options={backgroundColors}
 						title='Цвет фона'
 						onChange={handleChange('backgroundColor')}
 					/>
 					<Select
-						selected={props.formState.contentWidth}
+						selected={formState.contentWidth}
 						options={contentWidthArr}
 						title='Ширина контента'
 						onChange={handleChange('contentWidth')}

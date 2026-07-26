@@ -14,9 +14,6 @@ export const App = () => {
 	//Текущее состояние статьи
 	const [articleState, setArticleState] =
 		useState<ArticleStateType>(defaultArticleState);
-	//Текущее состояние формы
-	const [formState, setFormState] =
-		useState<ArticleStateType>(defaultArticleState);
 	return (
 		<main
 			className={clsx(styles.main)}
@@ -31,8 +28,6 @@ export const App = () => {
 			}>
 			<ArticleParamsForm
 				defaultArticleState={defaultArticleState}
-				formState={formState}
-				setFormState={setFormState}
 				setArticleState={setArticleState}
 			/>
 			<Article />
